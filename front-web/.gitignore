@@ -24,3 +24,6 @@ yarn-error.log*
 
 # cache file generated on installation, not necessary for git
 .eslintcache
+
+# mapbox token
+.env
