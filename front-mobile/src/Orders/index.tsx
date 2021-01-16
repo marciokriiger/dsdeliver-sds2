@@ -1,6 +1,6 @@
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, ScrollView, Alert, Text } from 'react-native';
+import { StyleSheet, ScrollView, Alert, Text, ActivityIndicator } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { fetchOrders } from '../api';
 import Header from '../Header';
@@ -38,7 +38,7 @@ function Orders() {
         <Header />
         <ScrollView style={styles.container}>
             {isLoading ? (
-                <Text>Buscando pedidos...</Text>
+                <ActivityIndicator style={styles.loading} size="large" color="#DA5C5C" />
             ) : (
                 orders.map(order => (
                     <TouchableWithoutFeedback 
@@ -60,6 +60,11 @@ const styles = StyleSheet.create({
     container: {
         paddingRight: '5%',
         paddingLeft: '5%',        
+    },
+    loading: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        padding: 100
     }
 });
 
