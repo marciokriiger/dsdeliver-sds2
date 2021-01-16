@@ -7,23 +7,28 @@ import OrderLocation from './OrderLocation';
 import OrderSummary from './OrderSummary';
 import ProductsList from './ProductsList';
 import StepsHeader from './StepsHeader';
+import Loader from 'react-loader-spinner';
 import { OrderLocationData, Product } from './types';
 import './styles.css';
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 
 function Orders() {
     const [products, setProducts] = useState<Product[]>([]);
     const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
     const [orderLocation, setOrderLocation] = useState<OrderLocationData>();
+    const [isLoading, setIsLoading] = useState(false);
     const totalPrice = selectedProducts.reduce((sum, item) => {
         return sum + item.price
     }, 0); 
 
     useEffect(() => {
+        setIsLoading(true);
         fetchProducts()
         .then(response => setProducts(response.data))
         .catch(() => {
             toast.warning('Erro ao listar produtos')
         })
+        .finally(() => setIsLoading(false));
     }, []);
 
     const handleSelectProduct = (product: Product) => {
@@ -53,28 +58,45 @@ function Orders() {
             toast.warning('Erro ao enviar pedido');
           })
       }  
-
-    return (
-        <>
-            <div className="orders-container">
-                <StepsHeader />
-                <ProductsList 
-                    products={products} 
-                    onSelectProduct={handleSelectProduct}
-                    selectedProducts={selectedProducts}
-                />
-                <OrderLocation 
-                    onChangeLocation={location => setOrderLocation(location)}
-                 />
-                <OrderSummary 
-                    amount={selectedProducts.length} 
-                    totalPrice={totalPrice}
-                    onSubmit={handleSubmit} 
-                />
-            </div>
-            <Footer />   
-        </> 
-    )
+      
+      if(isLoading) {
+        return (
+          <div className="orders-steps-container">
+            <Loader 
+              type="TailSpin"
+              color="#DA5C5C"
+              height={100}
+              width={100}
+              timeout={3000} //3 secs
+            />
+          </div>  
+        )
+      }
+      else {
+        return (
+          <>
+              <div className="orders-container">
+                  <StepsHeader />
+                  <ProductsList 
+                      products={products} 
+                      onSelectProduct={handleSelectProduct}
+                      selectedProducts={selectedProducts}
+                  />
+                  <OrderLocation 
+                      onChangeLocation={location => setOrderLocation(location)}
+                   />
+                  <OrderSummary 
+                      amount={selectedProducts.length} 
+                      totalPrice={totalPrice}
+                      onSubmit={handleSubmit} 
+                  />
+              </div>
+              <Footer />   
+          </> 
+        )
+      }
+    
+      
 }
 
 export default Orders;
